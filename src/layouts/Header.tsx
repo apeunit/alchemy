@@ -143,7 +143,7 @@ class Header extends React.Component<IProps, IStateProps> {
                       <AccountProfileName accountAddress={currentAccountAddress}
                         accountProfile={currentAccountProfile} daoAvatarAddress={daoAvatarAddress} />
                       <span className={classNames({ [css.walletImage]: true, [css.greyscale]: !accountIsEnabled })}>
-                        <AccountImage accountAddress={currentAccountAddress} />
+                        <AccountImage accountAddress={currentAccountAddress} profile={currentAccountProfile} />
                       </span>
                     </div>
                   </div>
@@ -152,7 +152,7 @@ class Header extends React.Component<IProps, IStateProps> {
                   <div className={css.pointer}></div>
                   <div className={css.walletDetails}>
                     <div className={classNames({ [css.walletImage]: true, [css.greyscale]: !accountIsEnabled })}>
-                      <AccountImage accountAddress={currentAccountAddress} />
+                      <AccountImage accountAddress={currentAccountAddress} profile={currentAccountProfile} />
                     </div>
                     <div className={css.profileName}>
                       <AccountProfileName accountAddress={currentAccountAddress}

@@ -39,10 +39,10 @@ class DaoMembersPage extends React.Component<IProps, null> {
     const { data } = this.props;
 
     const members = data;
-    const { daoState, profiles } = this.props;
+    const { daoState } = this.props;
 
     const membersHTML = members.map((member) =>
-      <DaoMember key={member.staticState.address} dao={daoState} member={member} profile={profiles[member.staticState.address]} />);
+      <DaoMember key={member.staticState.address} dao={daoState} member={member} />);
 
     return (
       <div className={css.membersContainer}>
@@ -50,14 +50,12 @@ class DaoMembersPage extends React.Component<IProps, null> {
         <Sticky enabled top={50} innerZ={10000}>
           <h2>Reputation Holders</h2>
         </Sticky>
-        <table>
+        <table className={css.memberHeaderTable}>
           <tbody className={css.memberTable + " " + css.memberTableHeading}>
             <tr>
-              <td className={css.memberAvatar}></td>
               <td className={css.memberName}>Name</td>
               <td className={css.memberAddress}>Address</td>
               <td className={css.memberReputation}>Reputation</td>
-              <td className={css.memberSocial}>Social Verification</td>
             </tr>
           </tbody>
         </table>
