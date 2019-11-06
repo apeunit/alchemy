@@ -1,14 +1,19 @@
 import { IDAOState, Scheme } from "@daostack/client";
-import { getArc } from "arc";
+import { toggleFollow } from "actions/profilesActions";
+import { enableWalletProvider, getArc } from "arc";
 import Loading from "components/Shared/Loading";
 import withSubscription, { ISubscriptionProps } from "components/Shared/withSubscription";
 import UnknownSchemeCard from "components/Dao/UnknownSchemeCard";
 import { KNOWN_SCHEME_NAMES, PROPOSAL_SCHEME_NAMES } from "lib/util";
 import * as React from "react";
 import { BreadcrumbsItem } from "react-breadcrumbs-dynamic";
+import { connect } from "react-redux";
 import { RouteComponentProps } from "react-router-dom";
 import * as Sticky from "react-stickynode";
 import { CSSTransition, TransitionGroup } from "react-transition-group";
+import { IRootState } from "reducers";
+import { showNotification } from "reducers/notifications";
+import { IProfileState } from "reducers/profilesReducer";
 import { combineLatest } from "rxjs";
 import * as css from "./DaoSchemesPage.scss";
 import ProposalSchemeCard from "./ProposalSchemeCard";
@@ -30,14 +35,42 @@ const Fade = ({ children, ...props }: any) => (
 );
 
 type IExternalProps = RouteComponentProps<any>;
-type IProps = IExternalProps & ISubscriptionProps<[IDAOState, Scheme[]]>;
+
+interface IStateProps {
+  currentAccountProfile: IProfileState
+}
+
+const mapStateToProps = (state: IRootState, ownProps: any): IStateProps => {
+  return {
+    currentAccountProfile: state.profiles[state.web3.currentAccountAddress]
+  };
+};
+
+interface IDispatchProps {
+  showNotification: typeof showNotification;
+  toggleFollow: typeof toggleFollow;
+}
+
+const mapDispatchToProps = {
+  showNotification,
+  toggleFollow
+};
+
+type IProps = IExternalProps & ISubscriptionProps<[IDAOState, Scheme[]]> & IStateProps & IDispatchProps;
 
 class DaoSchemesPage extends React.Component<IProps, null> {
 
+  public handleClickFollow = (schemeAddress: string) => async (e: any) => {
+    e.preventDefault();
+    if (!await enableWalletProvider({ showNotification: this.props.showNotification })) { return; }
+
+    const { toggleFollow, currentAccountProfile } = this.props;
+    await toggleFollow(currentAccountProfile.ethereumAccountAddress, "schemes", schemeAddress);
+  }
+
   public render() {
-    const props = this.props;
-    const dao = props.data[0];
-    const allSchemes = props.data[1];
+    const { currentAccountProfile, data} = this.props;
+    const [dao, allSchemes] = data;
     const contributionReward = allSchemes.filter((scheme: Scheme) => scheme.staticState.name === "ContributionReward");
     const knownSchemes = allSchemes.filter((scheme: Scheme) => scheme.staticState.name !== "ContributionReward" && KNOWN_SCHEME_NAMES.indexOf(scheme.staticState.name) >= 0);
     const unknownSchemes = allSchemes.filter((scheme: Scheme) =>  KNOWN_SCHEME_NAMES.indexOf(scheme.staticState.name) === -1 );
@@ -48,7 +81,12 @@ class DaoSchemesPage extends React.Component<IProps, null> {
         { allKnownSchemes.map((scheme: Scheme) => (
           <Fade key={"scheme " + scheme.id}>
             {PROPOSAL_SCHEME_NAMES.includes(scheme.staticState.name)
-              ? <ProposalSchemeCard dao={dao} scheme={scheme} />
+              ? <ProposalSchemeCard
+                  dao={dao}
+                  isFollowing={currentAccountProfile && currentAccountProfile.follows && currentAccountProfile.follows.schemes.includes(scheme.staticState.address)}
+                  scheme={scheme}
+                  toggleFollow={this.handleClickFollow(scheme.staticState.address)}
+                />
               : <SimpleSchemeCard dao={dao} scheme={scheme} />
             }
           </Fade>
@@ -85,7 +123,7 @@ class DaoSchemesPage extends React.Component<IProps, null> {
   }
 }
 
-export default withSubscription({
+const SubscribedDaosSchemePage = withSubscription({
   wrappedComponent: DaoSchemesPage,
   loadingComponent: <div className={css.loading}><Loading/></div>,
   errorComponent: (props) => <span>{props.error.message}</span>,
@@ -102,3 +140,6 @@ export default withSubscription({
     );
   },
 });
+
+export default connect(mapStateToProps, mapDispatchToProps)(SubscribedDaosSchemePage);
+

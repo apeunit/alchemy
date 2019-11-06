@@ -447,7 +447,7 @@ export enum GetSchemeIsActiveActions {
 }
 
 const schemeActionPropNames = new Map<string, Map<GetSchemeIsActiveActions, string>>([
-  [ 
+  [
     "SchemeRegistrar" , new Map<GetSchemeIsActiveActions, string>([
       [GetSchemeIsActiveActions.Register, "voteRegisterParams"],
       [GetSchemeIsActiveActions.Remove, "voteRemoveParams"],
@@ -509,3 +509,16 @@ export function roundUp(num: number, precision: number) {
   precision = Math.pow(10, precision);
   return Math.ceil(num * precision) / precision;
 }
+
+/**
+ * @param arr The array to search
+ * @param value The value to remove
+ */
+export function arrayRemove(arr: any[], value: any) {
+   return arr.filter(function(ele){
+       return ele != value;
+   });
+}
+
+
+
