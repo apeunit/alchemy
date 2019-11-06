@@ -63,6 +63,11 @@
     margin-right: 1px;
   }
 
+  &:disabled {
+    background-color: rgba(200,200,200,.5);
+    color: rgba(75,75,75,1);
+  }
+
   &.pending {
     border: 1px solid $black-tenthtone;
     color: $black-halftone;
