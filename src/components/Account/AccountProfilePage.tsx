@@ -2,6 +2,7 @@ import { IDAOState, IMemberState } from "@daostack/client";
 import * as profileActions from "actions/profilesActions";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { getArc, enableWalletProvider } from "arc";
+
 import BN = require("bn.js");
 import * as classNames from "classnames";
 import AccountImage from "components/Account/AccountImage";
@@ -56,7 +57,7 @@ const mapStateToProps = (state: IRootState, ownProps: IExternalProps): IExternal
 const mapDispatchToProps = {
   getProfile: profileActions.getProfile,
   updateProfile: profileActions.updateProfile,
-  showNotification
+  showNotification,
 };
 
 interface IFormValues {
@@ -108,7 +109,7 @@ class AccountProfilePage extends React.Component<IProps, null> {
 
     const profileContainerClass = classNames({
       [css.profileContainer]: true,
-      [css.withDao]: !!dao
+      [css.withDao]: !!dao,
     });
 
     return (
