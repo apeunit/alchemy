@@ -34,11 +34,13 @@ const Fade = ({ children, ...props }: any) => (
 );
 
 const DAOHeaderBackground = (props: { backgroundImage: string }) => (
-  <img
-    className={css.daoHeaderBackground}
-    src={props.backgroundImage}
-    alt="daoHeaderBackground"
-  />
+  // <img
+  //   className={css.daoHeaderBackground}
+  //   src={props.backgroundImage}
+  //   alt="daoHeaderBackground"
+  // />
+  <div className={css.daoHeaderBackground} style={{ backgroundImage: `url(${props.backgroundImage})`}}>
+  </div>
 );
 
 type IExternalProps = {
